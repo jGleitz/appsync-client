@@ -55,3 +55,20 @@ test("Graphql fake-tag works", () => {
   const res = gql`hi`;
   expect(res).toBe("hi");
 });
+
+// nock currently doesn’t support abort signals, see https://github.com/nock/nock/issues/2478
+// this test works but uses the real network, so it’s skipped by default
+test("abort signal is respected", async () => {
+  const realUrl = "https://example.com";
+  const aborted = new AbortController();
+  aborted.abort();
+  await expect(() =>
+    new AppsyncClient({ ...testParams, apiUrl: realUrl }).request({
+      query: GetTodoDocument,
+      variables: {
+        id: "id",
+      },
+      signal: aborted.signal,
+    })
+  ).rejects.toThrow("The operation was aborted");
+});

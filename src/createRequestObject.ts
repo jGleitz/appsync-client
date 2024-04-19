@@ -8,6 +8,7 @@ export type RequestObjectParams = {
   path: string;
   query: TypedDocumentNode;
   variables: any;
+  signal?: AbortSignal;
 };
 
 export type RequestObject = RequestOptions & {
@@ -23,6 +24,7 @@ export default function createRequestObject({
   path,
   query,
   variables,
+  signal,
 }: RequestObjectParams): RequestObject {
   // Covert the DocumentNode to a raw string query
   const rawQuery = print(query);
@@ -39,5 +41,6 @@ export default function createRequestObject({
       query: rawQuery,
       variables,
     }),
+    signal,
   };
 }

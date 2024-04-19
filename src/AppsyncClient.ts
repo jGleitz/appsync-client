@@ -100,9 +100,11 @@ export default class AppsyncClient {
   public request<TData = any, TVariables = Record<string, any>>({
     query,
     variables,
+    signal,
   }: {
     query: TypedDocumentNode<TData, TVariables>;
     variables?: TVariables;
+    signal?: AbortSignal;
   }): Promise<TData> {
     const requestObject = createRequestObject({
       host: this.host,
@@ -118,7 +120,10 @@ export default class AppsyncClient {
       sessionToken: this.sessionToken,
     });
 
-    return httpsRequestPromisified(signedRequestObject) as Promise<TData>;
+    return httpsRequestPromisified({
+      ...signedRequestObject,
+      signal,
+    }) as Promise<TData>;
   }
 }
 
